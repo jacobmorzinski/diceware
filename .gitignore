@@ -7,5 +7,15 @@ pom.xml.asc
 *.class
 /.lein-*
 /.nrepl-port
+
+# Mercurial
 .hgignore
 .hg/
+
+# IntelliJ IDEA
+/.idea
+*.iml
+
+# vim
+*~
+*.swp
