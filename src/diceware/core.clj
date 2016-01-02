@@ -1,25 +1,23 @@
 (ns diceware.core
+  (:require [clojure.java.io :as io]
+            [clojure.edn :as edn])
+  (:import [java.security SecureRandom])
   (:gen-class))
-
-(import '[java.security SecureRandom])
-
-(require '[clojure.java.io :as io]
-         '[clojure.edn])
 
 (def random (SecureRandom.))
 
 (defn one-roll
   "return one random die roll"
   []
-  (+ 1 (int (Math/floor (* 6 (. random nextFloat))))))
+  (inc (.nextInt random 6)))
 
 (defn five-rolls
   "return a keyword formed from five random die rolls"
   []
-  (keyword (clojure.string/join "" (repeatedly 5 one-roll))))
+  (keyword (apply str (repeatedly 5 one-roll))))
 
 ; You might try to convert the io/resource to io/file ...
-; and then a PushbackReader for clojure.edn/read ... 
+; and then a PushbackReader for edn/read ... 
 ; but that works in the REPL but doesn't work in an Uberjar.
 ; Something about io/file returning a URL and not a File.
 ; http://stackoverflow.com/a/32237761/3599738
@@ -27,7 +25,7 @@
   (-> "diceware-map.edn"
       io/resource
       slurp
-      clojure.edn/read-string))
+      edn/read-string))
 
 (defn -main
   "Print some random die rolls"
@@ -35,7 +33,6 @@
   (def n (try
            (Integer/parseInt (first args))
            (catch Exception e 5)))
-  (dorun
-    (for [i (range n)]
-      (let [roll (five-rolls)]
-        (println "roll" roll "makes word:" (roll diceware-map))))))
+  (dotimes [_ n]
+    (let [roll (five-rolls)]
+      (println (roll diceware-map)))))
