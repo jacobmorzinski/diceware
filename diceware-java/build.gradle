@@ -4,10 +4,16 @@ version '1.0-SNAPSHOT'
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = "diceware"
+mainClassName = 'diceware'
 
 repositories {
     mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes('Main-Class': 'diceware')
+    }
 }
 
 dependencies {
