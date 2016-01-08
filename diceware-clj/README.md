@@ -1,15 +1,15 @@
 # diceware
 
-Dieware: http://world.std.com/~reinhold/diceware.html
-
-Wordlist from: http://world.std.com/~reinhold/diceware.wordlist.asc
-
+An implementation in Clojure.
 
 ## Usage
 
-    $ lein repl
-    $ (-main 8)
+    $ lein run
 
+or
+
+    $ lein uberjar
+    $ java -jar ./target/uberjar/diceware-0.2.0-standalone.jar
 
 ## License
 
