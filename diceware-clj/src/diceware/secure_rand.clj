@@ -12,12 +12,14 @@
   "Try to create an appropriate SecureRandom.
    http://www.cigital.com/justice-league-blog/2009/08/14/proper-use-of-javas-securerandom/ "
   []
-  (try
-    (try (SecureRandom/getInstance "SHA1PRNG" "SUN")
-         (catch NoSuchProviderException _
-           (SecureRandom/getInstance "SHA1PRNG")))
-    (catch NoSuchAlgorithmException _
-      (SecureRandom.))))
+  (doto
+    (try
+      (try (SecureRandom/getInstance "SHA1PRNG" "SUN")
+           (catch NoSuchProviderException _
+             (SecureRandom/getInstance "SHA1PRNG")))
+      (catch NoSuchAlgorithmException _
+        (SecureRandom.)))
+    (.nextBytes (byte-array 16))))
 
 (defonce ^ThreadLocal ^:private threadlocal-random
   (proxy [ThreadLocal]
