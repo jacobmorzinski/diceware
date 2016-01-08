@@ -71,6 +71,7 @@ public class diceware {
         } catch (NoSuchAlgorithmException e1) {
             sr = new SecureRandom();
         }
+        sr.nextBytes(new byte[8]);
         return sr;
     }
 
