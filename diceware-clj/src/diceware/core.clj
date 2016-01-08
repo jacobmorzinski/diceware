@@ -6,12 +6,12 @@
   (:gen-class))
 
 (defn one-roll
-  "return one random die roll"
+  "return an int from a roll of a single die"
   []
   (inc (securerandom/rand-int 6)))
 
 (defn five-rolls
-  "return a keyword formed from five random die rolls, such as :12346"
+  "return a keyword formed from a roll of five dice, such as :12346"
   []
   (->> (repeatedly 5 one-roll) ; e.g, => (1 2 3 4 6)
        (apply str)             ; e.g, => "12346"
