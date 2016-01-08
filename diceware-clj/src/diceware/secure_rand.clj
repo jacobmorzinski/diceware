@@ -1,6 +1,6 @@
 (ns diceware.secure-rand
   (:refer-clojure :exclude [rand rand-int rand-nth])
-  (:import [java.security SecureRandom]))
+  (:import [java.security SecureRandom NoSuchProviderException NoSuchAlgorithmException]))
 
 ;; I like the secure-rand library at:
 ;;  https://github.com/killme2008/secure-rand/
@@ -8,21 +8,16 @@
 ;; So here, I just use the pieces that create
 ;; secure versions of [rand rand-int rand-nth]
 
-(defmacro ^:private wrap-ignore-exception [& body]
-  `(try
-     ~@body
-     (catch Throwable e#)))
-
 (defn- ^SecureRandom new-random
-  "Try to create a appropriate SecureRandom.
+  "Try to create an appropriate SecureRandom.
    http://www.cigital.com/justice-league-blog/2009/08/14/proper-use-of-javas-securerandom/ "
   []
-  (doto
-      (or
-       (wrap-ignore-exception (SecureRandom/getInstance "SHA1PRNG" "SUN"))
-       (wrap-ignore-exception (SecureRandom/getInstance "SHA1PRNG"))
-       (wrap-ignore-exception (SecureRandom.)))
-    (.nextBytes (byte-array 16))))
+  (try
+    (try (SecureRandom/getInstance "SHA1PRNG" "SUN")
+         (catch NoSuchProviderException _
+           (SecureRandom/getInstance "SHA1PRNG")))
+    (catch NoSuchAlgorithmException _
+      (SecureRandom.))))
 
 (defonce ^ThreadLocal ^:private threadlocal-random
   (proxy [ThreadLocal]
