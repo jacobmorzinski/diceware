@@ -41,14 +41,15 @@ object DicewareMap {
         val gson = Gson()
         val IS = DicewareMap::class.java.getResourceAsStream("/diceware-map.json")
         val reader = JsonReader(InputStreamReader(IS, "ASCII"))
-        // an object expression that descends from TypeToken
-        // http://stackoverflow.com/a/33420043/3599738
-        val dicewareWordPairType = object : TypeToken<Map<String,String>>() {}.type
+        val dicewareWordPairType = genericType<Map<String,String>>()
         val dicewareMap: Map<String,String> = gson.fromJson(reader, dicewareWordPairType)
         return dicewareMap
     }
 }
 
+// a helper function to make it easier to create a TypeToken
+// http://stackoverflow.com/a/33420043/3599738
+inline fun <reified T> genericType() = object: TypeToken<T>() {}.type
 
 fun getSecureRandom(): SecureRandom {
     val sr: SecureRandom;
