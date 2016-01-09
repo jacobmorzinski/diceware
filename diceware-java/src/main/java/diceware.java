@@ -46,7 +46,7 @@ public class diceware {
     // Get dicewareMap from resource (jar).
     private static Map<String,String> getDicewareMap() {
         Gson gson = new Gson();
-        InputStream IS = diceware.class.getResourceAsStream("diceware-map.json");
+        InputStream IS = diceware.class.getResourceAsStream("/diceware-map.json");
         JsonReader reader;
         try {
             reader = new JsonReader(new InputStreamReader(IS, "ASCII"));
