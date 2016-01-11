@@ -1,19 +1,22 @@
-// vim:shiftwidth=4:tabstop=4:expandtab:filetype=groovy
+// You can build with "./gradlew" (or "gradlew.bat")
+// For more information about Gradle see
+// https://docs.gradle.org/current/userguide/userguide.html
 
-// creates tasks including: shadowJar, installShadowApp
 plugins {
+    id 'java'
+    id 'application'
     id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
-
-group 'com.github.jacobmorzinski.diceware'
-version '1.0-SNAPSHOT'
-
-apply plugin: 'java'
-apply plugin: 'application'
 
 mainClassName = 'diceware'
 
 defaultTasks 'run'
+
+run {
+    if (project.hasProperty("args")) {
+        args project.args.split('\\s+')
+    }
+}
 
 repositories {
     mavenCentral()
@@ -40,3 +43,5 @@ task wrapper(type: Wrapper) {
     // source code to help with code completion.
     distributionUrl="https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip"
 }
+
+// vim:shiftwidth=4:tabstop=4:expandtab:filetype=groovy
