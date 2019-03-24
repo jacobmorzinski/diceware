@@ -1,3 +1,10 @@
+
+#[macro_use]
+extern crate clap;
+use clap::{Arg, App, AppSettings};
+
+use std::iter;
+
 use rand::seq::SliceRandom;
 
 fn get_word_list() -> Vec<String> {
@@ -7778,20 +7785,11 @@ fn get_word_list() -> Vec<String> {
         "?",
         "??",
         "@",
-    ].iter().map(|&s| s.into()).collect::<Vec<String>>();
+    ].iter().map(|&s| s.to_string()).collect::<Vec<String>>();
     word_list
 }
 
-
-fn main() -> Result<(), &'static str> {
-    // println!("Hello, world!");
-    let word_list = get_word_list();
-    let result = get_diceware_word(word_list);
-    println!("{}", result);
-    Ok(())
-}
-
-fn get_diceware_word(word_list: Vec<String>) -> String {
+fn get_diceware_word(word_list: &Vec<String>) -> String {
 //    choose can return None if the slice is empty
     let a_word: Option<&String> = word_list.choose(&mut rand::thread_rng());
     match a_word {
@@ -7799,3 +7797,51 @@ fn get_diceware_word(word_list: Vec<String>) -> String {
         Some(word) => word,
     }.to_owned()
 }
+
+fn main() -> Result<(), &'static str> {
+
+    let matches = App::new(crate_name!())
+        .version(crate_version!())
+        .setting(AppSettings::DisableVersion)
+        .about(crate_description!())
+        .arg(Arg::with_name("join")
+            .short("j")
+            .long("join")
+            .value_name("SEPARATOR")
+            .help("Join words using separator")
+            .takes_value(true))
+        .arg(Arg::with_name("NUMBER")
+            .help("Sets the number of diceware words to select")
+            .required(false)
+            .default_value("4")
+            .index(1))
+        .get_matches();
+
+
+    let number = value_t!(matches.value_of("NUMBER"), u8).unwrap_or_else(|e| e.exit());
+
+    let word_list = get_word_list();
+
+    let word_stream = iter::repeat_with(|| get_diceware_word(&word_list));
+    let mut words = word_stream.take(number as usize);
+
+    if let Some(separator) = matches.value_of("join") {
+        // Use the provided separator to join words.
+        if let Some(word) = words.next() {
+            print!("{}", word);
+            for word in words {
+                print!("{}", separator);
+                print!("{}", word);
+            }
+            println!("");
+        }
+    } else {
+        // no separator, so print one word per line
+        for word in words {
+            println!("{}", word);
+        }
+    }
+
+    Ok(())
+}
+
