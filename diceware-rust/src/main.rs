@@ -7809,6 +7809,7 @@ fn main() -> Result<(), &'static str> {
             .long("join")
             .value_name("SEPARATOR")
             .help("Join words using separator")
+            .default_value("\n")
             .takes_value(true))
         .arg(Arg::with_name("NUMBER")
             .help("Sets the number of diceware words to select")
@@ -7818,28 +7819,21 @@ fn main() -> Result<(), &'static str> {
         .get_matches();
 
 
-    let number = value_t!(matches.value_of("NUMBER"), u8).unwrap_or_else(|e| e.exit());
+    let number = value_t!(matches.value_of("NUMBER"), u16).unwrap_or_else(|e| e.exit());
 
     let word_list = get_word_list();
 
     let word_stream = iter::repeat_with(|| get_diceware_word(&word_list));
     let mut words = word_stream.take(number as usize);
 
-    if let Some(separator) = matches.value_of("join") {
-        // Use the provided separator to join words.
-        if let Some(word) = words.next() {
-            print!("{}", word);
-            for word in words {
-                print!("{}", separator);
-                print!("{}", word);
-            }
-            println!("");
-        }
-    } else {
-        // no separator, so print one word per line
+    let separator = matches.value_of("join").unwrap_or("\n");
+    if let Some(word) = words.next() {
+        print!("{}", word);
         for word in words {
-            println!("{}", word);
+            print!("{}", separator);
+            print!("{}", word);
         }
+        println!();
     }
 
     Ok(())
