@@ -1,11 +1,27 @@
 
 #[macro_use]
 extern crate clap;
+
 use clap::{Arg, App, AppSettings};
-
+use derive_more::From;
 use std::iter;
-
 use rand::seq::SliceRandom;
+
+// #[non_exhaustive] // One day
+#[derive(From, Debug)]
+pub enum Error {
+    // External Errors
+    Io(std::io::Error),
+
+    // My errors
+    InvalidToken,
+
+    // Allows you to add future errors without breaking compatibility
+    // for your user's `match` arms.
+    // This will eventually be done with #[non_exhaustive]
+    #[doc(hidden)]
+    __Nonexhaustive
+}
 
 fn get_word_list() -> Vec<String> {
     let word_list: Vec<String> = [
@@ -7798,22 +7814,25 @@ fn get_diceware_word(word_list: &Vec<String>) -> String {
     }.to_owned()
 }
 
-fn main() -> Result<(), &'static str> {
+pub type Result<T> = std::result::Result<T, Error>;
 
+fn main() -> Result<()> {
     let matches = App::new(crate_name!())
         .version(crate_version!())
-        .setting(AppSettings::DisableVersion)
         .about(crate_description!())
+        .setting(AppSettings::DisableVersion) // no --version flag
+        .setting(AppSettings::UnifiedHelpMessage)
         .arg(Arg::with_name("join")
             .short("j")
             .long("join")
             .value_name("SEPARATOR")
-            .help("Join words using separator")
+            .help("Join words using separator [default: \\n]")
             .default_value("\n")
+            .hide_default_value(true) // it doesn't print properly
             .takes_value(true))
         .arg(Arg::with_name("NUMBER")
-            .help("Sets the number of diceware words to select")
             .required(false)
+            .help("Sets the number of diceware words to select")
             .default_value("4")
             .index(1))
         .get_matches();
