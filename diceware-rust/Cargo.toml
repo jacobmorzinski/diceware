@@ -5,6 +5,14 @@ authors = ["Jacob Morzinski <jmorzins@mit.edu>"]
 description = "Print random words from the diceware list"
 edition = "2018"
 
+[[bin]]
+name = "diceware"
+path = "src/main.rs"
+
+[lib]
+name = "diceware"
+path = "src/lib.rs"
+
 [dependencies]
 derive_more = "*"
 rand = "0.7.2"
