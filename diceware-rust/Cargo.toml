@@ -5,6 +5,9 @@ authors = ["Jacob Morzinski <jmorzins@mit.edu>"]
 description = "Print random words from the diceware list"
 edition = "2018"
 
+[build-dependencies]
+phf_codegen = "0.7.24"
+
 [[bin]]
 name = "diceware"
 path = "src/main.rs"
@@ -14,7 +17,8 @@ name = "diceware"
 path = "src/lib.rs"
 
 [dependencies]
-derive_more = "*"
+derive_more = "0.15.0"
+phf = "0.7.24"
 rand = "0.7.2"
 
 [dependencies.clap]

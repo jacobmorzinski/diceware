@@ -1,6 +1,15 @@
 
 use rand::seq::SliceRandom;
 
+extern crate phf;
+
+// build.rs produces a codegen.rs file containing a phf type:
+// static WORDLIST: phf::Map<K,V>
+include!(concat!(env!("OUT_DIR"), "/codegen.rs"));
+pub fn get_word(roll: &str) -> Option<&str> {
+    WORDLIST.get(roll).cloned()
+}
+
 pub fn get_diceware_word(word_list: &Vec<String>) -> String {
 //    choose can return None if the slice is empty
     let a_word: Option<&String> = word_list.choose(&mut rand::thread_rng());

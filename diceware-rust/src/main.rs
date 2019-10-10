@@ -65,6 +65,9 @@ fn main() -> Result<()> {
         println!();
     }
 
+    let word11112 = get_word("11112").unwrap();
+    println!("{}", word11112);
+
     Ok(())
 }
 
