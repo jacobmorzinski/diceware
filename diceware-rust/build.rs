@@ -14,7 +14,11 @@ fn main() {
     let path = Path::new(&env::var("OUT_DIR").unwrap()).join("codegen.rs");
     let mut file = BufWriter::new(File::create(&path).unwrap());
 
-    write!(&mut file, "static WORDLIST: phf::Map<&'static str, &'static str> =\n").unwrap();
+    write!(
+        &mut file,
+        "static WORDLIST: phf::Map<&'static str, &'static str> =\n"
+    )
+    .unwrap();
 
     let mut builder = phf_codegen::Map::new();
     for &(key, value) in &entries {
@@ -7803,7 +7807,7 @@ fn diceware_word_vec() -> Vec<(&'static str, &'static str)> {
         ("66663", "="),
         ("66664", "?"),
         ("66665", "??"),
-        ("66666", "@")
+        ("66666", "@"),
     ];
     entries
 }
