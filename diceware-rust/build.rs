@@ -5,7 +5,28 @@ use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 
+// This build script prepares a word list map at build time,
+// so that the map is static at run time.
+
 fn main() {
+    let entries = diceware_word_vec();
+
+    let path = Path::new(&env::var("OUT_DIR").unwrap()).join("codegen.rs");
+    let mut file = BufWriter::new(File::create(&path).unwrap());
+
+    write!(&mut file, "static WORDLIST: phf::Map<&'static str, &'static str> =\n").unwrap();
+
+    let mut builder = phf_codegen::Map::new();
+    for &(key, value) in &entries {
+        let escaped_value = format!("{:?}", value);
+        builder.entry(key, &escaped_value.to_owned());
+    }
+    builder.build(&mut file).unwrap();
+
+    write!(&mut file, ";\n").unwrap();
+}
+
+fn diceware_word_vec() -> Vec<(&'static str, &'static str)> {
     let entries: Vec<(&str, &str)> = vec![
         ("11111", "a"),
         ("11112", "a&p"),
@@ -7784,18 +7805,5 @@ fn main() {
         ("66665", "??"),
         ("66666", "@")
     ];
-
-    let path = Path::new(&env::var("OUT_DIR").unwrap()).join("codegen.rs");
-    let mut file = BufWriter::new(File::create(&path).unwrap());
-
-    write!(&mut file, "static WORDLIST: phf::Map<&'static str, &'static str> =\n").unwrap();
-
-    let mut builder = phf_codegen::Map::new();
-    for &(key, value) in &entries {
-        let escaped_value = format!("{:?}", value);
-        builder.entry(key, &escaped_value.to_owned());
-    }
-    builder.build(&mut file).unwrap();
-
-    write!(&mut file, ";\n").unwrap();
+    entries
 }
