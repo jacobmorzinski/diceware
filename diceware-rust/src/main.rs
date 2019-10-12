@@ -68,12 +68,12 @@ fn main() -> Result<()> {
     //     println!();
     // }
 
-    let mut words :Vec<String> = Vec::new();
+    let mut words = Vec::<String>::new();
 
     for _ in 0..number {
-        let diceroll = roll5();
+        let diceroll = roll();
         let word = get_word(&diceroll).unwrap();
-        words.push(word.to_string());
+        words.push(word);
     }
 
     let separator = matches.value_of("SEPARATOR").unwrap_or("\n");
