@@ -4,6 +4,7 @@ extern crate clap;
 use clap::{App, AppSettings, Arg};
 use derive_more::From;
 
+use crate::Error::NoWordForRoll;
 use diceware::*;
 
 // #[non_exhaustive] // One day
@@ -13,7 +14,9 @@ pub enum Error {
     Io(std::io::Error),
 
     // My errors
-    InvalidToken,
+    NoWordForRoll {
+        roll: String,
+    },
 
     // Allows you to add future errors without breaking compatibility
     // for your user's `match` arms.
@@ -34,20 +37,20 @@ fn main() -> Result<()> {
             Arg::with_name("SEPARATOR")
                 .short("j")
                 .long("join")
-                .help("Join words using separator [default: \\n]")
+                .takes_value(true)
                 .default_value("\n")
                 .hide_default_value(true) // it doesn't print properly
-                .takes_value(true),
+                .help("Join words using separator [default: \\n]"),
         )
         .arg(
             Arg::with_name("NUMBER")
                 .required(false)
-                .help("Sets the number of diceware words to select")
                 .default_value("4")
-                .index(1),
+                .help("Sets the number of diceware words to select"),
         )
         .get_matches();
 
+    let separator = matches.value_of("SEPARATOR").unwrap_or("\n");
     let number = value_t!(matches.value_of("NUMBER"), u16).unwrap_or_else(|e| e.exit());
 
     // no longer using a functional word stream
@@ -72,11 +75,12 @@ fn main() -> Result<()> {
 
     for _ in 0..number {
         let diceroll = roll();
-        let word = get_word(&diceroll).unwrap();
-        words.push(word);
+        match get_word(&diceroll) {
+            Some(word) => words.push(word),
+            None => return Err(NoWordForRoll { roll: diceroll }),
+        }
     }
 
-    let separator = matches.value_of("SEPARATOR").unwrap_or("\n");
     print!("{}", words.join(separator));
     println!();
 
