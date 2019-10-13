@@ -1,4 +1,4 @@
-use rand::seq::SliceRandom;
+use rand::Rng;
 
 extern crate phf;
 
@@ -11,14 +11,12 @@ pub fn get_word(roll: &str) -> Option<String> {
 }
 
 pub fn roll() -> String {
-    let mut results = Vec::<&str>::with_capacity(5);
     let mut rng = rand::thread_rng();
-    let choices = vec!["1", "2", "3", "4", "5", "6"];
-    results.push(choices.choose(&mut rng).unwrap());
-    results.push(choices.choose(&mut rng).unwrap());
-    results.push(choices.choose(&mut rng).unwrap());
-    results.push(choices.choose(&mut rng).unwrap());
-    results.push(choices.choose(&mut rng).unwrap());
-    let result = results.join("").to_string();
+    let mut results = Vec::<String>::with_capacity(5);
+    for _ in 0..5 {
+        let r = rng.gen_range(1, 7);
+        results.push(r.to_string())
+    }
+    let result = results.join("");
     result
 }
