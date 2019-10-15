@@ -3,6 +3,7 @@ extern crate clap;
 
 use clap::{App, AppSettings, Arg};
 use derive_more::From;
+use std::iter;
 
 use crate::Error::NoWordForRoll;
 use diceware::*;
@@ -53,23 +54,21 @@ fn main() -> Result<()> {
     let separator = matches.value_of("SEPARATOR").unwrap_or("\n");
     let number = value_t!(matches.value_of("NUMBER"), u16).unwrap_or_else(|e| e.exit());
 
-    // no longer using a functional word stream
-    // it would be nice to do that again sometime.
+    println!("[Iterator style]");
 
-    // let word_list = get_word_list();
+    let word_stream = iter::repeat_with(|| get_diceware_word());
+    let mut words = word_stream.take(number as usize);
 
-    // let word_stream = iter::repeat_with(|| get_diceware_word(&word_list));
-    // let mut words = word_stream.take(number as usize);
+    if let Some(word) = words.next() {
+        print!("{}", word);
+        for word in words {
+            print!("{}", separator);
+            print!("{}", word);
+        }
+        println!();
+    }
 
-    // let separator = matches.value_of("SEPARATOR").unwrap_or("\n");
-    // if let Some(word) = words.next() {
-    //     print!("{}", word);
-    //     for word in words {
-    //         print!("{}", separator);
-    //         print!("{}", word);
-    //     }
-    //     println!();
-    // }
+    println!("[Explicit roll style]");
 
     let mut words = Vec::<String>::new();
 
