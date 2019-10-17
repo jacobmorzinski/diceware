@@ -56,7 +56,7 @@ fn main() -> Result<()> {
 
     println!("[Iterator style]");
 
-    let word_stream = iter::repeat_with(|| get_diceware_word());
+    let word_stream = iter::repeat_with(|| get_word());
     let mut words = word_stream.take(number as usize);
 
     if let Some(word) = words.next() {
@@ -74,7 +74,7 @@ fn main() -> Result<()> {
 
     for _ in 0..number {
         let diceroll = roll();
-        match get_word(&diceroll) {
+        match get_word_by_roll(&diceroll) {
             Some(word) => words.push(word),
             None => return Err(NoWordForRoll { roll: diceroll }),
         }
