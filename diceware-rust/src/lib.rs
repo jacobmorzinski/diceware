@@ -1,5 +1,20 @@
+use derive_more::From;
 use rand::Rng;
 use std::fmt;
+
+// #[non_exhaustive] // One day
+#[derive(From, Debug)]
+pub enum Error {
+    NoWordForRoll {
+        roll: String,
+    },
+
+    // Allows you to add future errors without breaking compatibility
+    // for your user's `match` arms.
+    // This will eventually be done with #[non_exhaustive]
+    #[doc(hidden)]
+    __Nonexhaustive,
+}
 
 #[derive(Debug)]
 pub struct Roll {
@@ -42,10 +57,12 @@ pub fn get_word_by_roll(roll: &Roll) -> String {
     WORDLIST[idx].to_string()
 }
 
-pub fn get_word_by_str(roll: &str) -> Option<String> {
+pub fn get_word_by_str(roll: &str) -> Result<String, Error> {
     let mut idx: usize = 0;
     if roll.len() != 5 {
-        return None;
+        return Err(Error::NoWordForRoll {
+            roll: roll.to_string(),
+        });
     }
     for c in roll.chars() {
         idx = 6 * idx
@@ -56,10 +73,14 @@ pub fn get_word_by_str(roll: &str) -> Option<String> {
                 '4' => 3,
                 '5' => 4,
                 '6' => 5,
-                _ => return None,
+                _ => {
+                    return Err(Error::NoWordForRoll {
+                        roll: roll.to_string(),
+                    })
+                }
             }
     }
-    Some(WORDLIST[idx].to_string())
+    Ok(WORDLIST[idx].to_string())
 }
 
 pub fn get_word() -> String {
