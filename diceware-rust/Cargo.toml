@@ -1,7 +1,7 @@
 [package]
 name = "diceware-rust"
-version = "0.3.0"
-authors = ["Jacob Morzinski <jmorzins@mit.edu>"]
+version = "0.4.0"
+authors = ["Jacob Morzinski <morzinski@gmail.com>"]
 description = "Print random words from the diceware list"
 edition = "2018"
 
@@ -14,9 +14,6 @@ name = "diceware"
 path = "src/lib.rs"
 
 [dependencies]
+clap = { version = "2.*", default-features = false}
 derive_more = "0.15.0"
 rand = "0.7.2"
-
-[dependencies.clap]
-version = "~2.32"
-default-features = false
