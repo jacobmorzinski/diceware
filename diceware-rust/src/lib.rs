@@ -1,6 +1,48 @@
 use rand::Rng;
+use std::fmt;
 
-pub fn get_word_by_roll(roll: &str) -> Option<String> {
+#[derive(Debug)]
+pub struct Roll {
+    roll: String,
+}
+
+impl Roll {
+    pub fn new() -> Roll {
+        Roll {
+            roll: crate::roll(),
+        }
+    }
+
+    fn value(&self) -> usize {
+        let mut idx: usize = 0;
+        for c in self.roll.chars() {
+            idx = 6 * idx
+                + match c {
+                    '1' => 0,
+                    '2' => 1,
+                    '3' => 2,
+                    '4' => 3,
+                    '5' => 4,
+                    '6' => 5,
+                    _ => panic!("Unexpected character in Roll"),
+                }
+        }
+        idx
+    }
+}
+
+impl fmt::Display for Roll {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.roll)
+    }
+}
+
+pub fn get_word_by_roll(roll: &Roll) -> String {
+    let idx = roll.value();
+    WORDLIST[idx].to_string()
+}
+
+pub fn get_word_by_str(roll: &str) -> Option<String> {
     let mut idx: usize = 0;
     if roll.len() != 5 {
         return None;

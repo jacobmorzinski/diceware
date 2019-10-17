@@ -74,12 +74,21 @@ fn main() -> Result<()> {
 
     for _ in 0..number {
         let diceroll = roll();
-        match get_word_by_roll(&diceroll) {
+        match get_word_by_str(&diceroll) {
             Some(word) => words.push(word),
             None => return Err(NoWordForRoll { roll: diceroll }),
         }
     }
 
+    print!("{}", words.join(separator));
+    println!();
+
+    println!("[New Roll style]");
+    let mut words = Vec::<String>::new();
+    for _ in 0..number {
+        let diceroll = diceware::Roll::new();
+        words.push(get_word_by_roll(&diceroll));
+    }
     print!("{}", words.join(separator));
     println!();
 
