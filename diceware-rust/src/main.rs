@@ -39,6 +39,10 @@ fn main() -> Result<()> {
     let number: usize = opt.number;
     let method: &str = &opt.method;
 
+    print!("Test roll: ");
+    let test_roll = diceware::Roll5::new();
+    println!("{:?}", &test_roll);
+
     if method == "stream" {
         let word_stream = iter::repeat_with(|| diceware::get_word());
         let mut words = word_stream.take(number);

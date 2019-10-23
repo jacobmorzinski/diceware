@@ -1,4 +1,5 @@
 use derive_more::From;
+use rand::distributions::{Distribution, Standard};
 use rand::Rng;
 use std::fmt;
 
@@ -14,6 +15,61 @@ pub enum Error {
     // This will eventually be done with #[non_exhaustive]
     #[doc(hidden)]
     __Nonexhaustive,
+}
+
+#[derive(Debug, Copy, Clone)]
+enum DieFace {
+    One,
+    Two,
+    Three,
+    Four,
+    Five,
+    Six,
+}
+
+// Implementing Distribution<T> for Standard for user types T
+// makes it possible to generate type T with Rng::gen()
+// https://docs.rs/rand/0.7.0/rand/distributions/index.html#the-standard-distribution
+impl Distribution<DieFace> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> DieFace {
+        match rng.gen_range(0, 6) {
+            0 => DieFace::One,
+            1 => DieFace::Two,
+            2 => DieFace::Three,
+            3 => DieFace::Four,
+            4 => DieFace::Five,
+            _ => DieFace::Six,
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct Roll5 {
+    values: [DieFace; 5],
+}
+
+impl Roll5 {
+    pub fn new() -> Roll5 {
+        let mut rng = rand::thread_rng();
+        let result: [DieFace; 5] = [rng.gen(), rng.gen(), rng.gen(), rng.gen(), rng.gen()];
+        Roll5 { values: result }
+    }
+
+    fn value(&self) -> usize {
+        let mut idx: usize = 0;
+        for r in self.values.iter() {
+            idx = 6 * idx
+                + match r {
+                    DieFace::One => 0,
+                    DieFace::Two => 1,
+                    DieFace::Three => 2,
+                    DieFace::Four => 3,
+                    DieFace::Five => 4,
+                    DieFace::Six => 5,
+                }
+        }
+        idx
+    }
 }
 
 #[derive(Debug)]
