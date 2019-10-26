@@ -41,7 +41,7 @@ fn main() -> Result<()> {
 
     print!("Test roll: ");
     let test_roll = diceware::Roll5::new();
-    println!("{:?}", &test_roll);
+    println!("{}", &test_roll);
 
     if method == "stream" {
         let word_stream = iter::repeat_with(|| diceware::get_word());

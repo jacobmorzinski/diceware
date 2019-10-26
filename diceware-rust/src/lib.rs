@@ -27,6 +27,20 @@ enum DieFace {
     Six,
 }
 
+impl fmt::Display for DieFace {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let d = match self {
+            DieFace::One => "1",
+            DieFace::Two => "2",
+            DieFace::Three => "3",
+            DieFace::Four => "4",
+            DieFace::Five => "5",
+            DieFace::Six => "6",
+        };
+        write!(f, "{}", &d)
+    }
+}
+
 // Implementing Distribution<T> for Standard for user types T
 // makes it possible to generate type T with Rng::gen()
 // https://docs.rs/rand/0.7.0/rand/distributions/index.html#the-standard-distribution
@@ -38,7 +52,8 @@ impl Distribution<DieFace> for Standard {
             2 => DieFace::Three,
             3 => DieFace::Four,
             4 => DieFace::Five,
-            _ => DieFace::Six,
+            5 => DieFace::Six,
+            _ => unreachable!(),
         }
     }
 }
@@ -46,6 +61,12 @@ impl Distribution<DieFace> for Standard {
 #[derive(Debug)]
 pub struct Roll5 {
     values: [DieFace; 5],
+}
+
+impl fmt::Display for Roll5 {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.values.iter().map(|v| write!(f, "{}", v)).collect()
+    }
 }
 
 impl Roll5 {
