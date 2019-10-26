@@ -18,7 +18,7 @@ pub enum Error {
 }
 
 #[derive(Debug, Copy, Clone)]
-enum DieFace {
+enum DieRoll {
     One,
     Two,
     Three,
@@ -27,15 +27,15 @@ enum DieFace {
     Six,
 }
 
-impl fmt::Display for DieFace {
+impl fmt::Display for DieRoll {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let d = match self {
-            DieFace::One => "1",
-            DieFace::Two => "2",
-            DieFace::Three => "3",
-            DieFace::Four => "4",
-            DieFace::Five => "5",
-            DieFace::Six => "6",
+            DieRoll::One => "1",
+            DieRoll::Two => "2",
+            DieRoll::Three => "3",
+            DieRoll::Four => "4",
+            DieRoll::Five => "5",
+            DieRoll::Six => "6",
         };
         write!(f, "{}", &d)
     }
@@ -44,36 +44,36 @@ impl fmt::Display for DieFace {
 // Implementing Distribution<T> for Standard for user types T
 // makes it possible to generate type T with Rng::gen()
 // https://docs.rs/rand/0.7.0/rand/distributions/index.html#the-standard-distribution
-impl Distribution<DieFace> for Standard {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> DieFace {
+impl Distribution<DieRoll> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> DieRoll {
         match rng.gen_range(0, 6) {
-            0 => DieFace::One,
-            1 => DieFace::Two,
-            2 => DieFace::Three,
-            3 => DieFace::Four,
-            4 => DieFace::Five,
-            5 => DieFace::Six,
+            0 => DieRoll::One,
+            1 => DieRoll::Two,
+            2 => DieRoll::Three,
+            3 => DieRoll::Four,
+            4 => DieRoll::Five,
+            5 => DieRoll::Six,
             _ => unreachable!(),
         }
     }
 }
 
 #[derive(Debug)]
-pub struct Roll5 {
-    values: [DieFace; 5],
+pub struct Roll {
+    values: [DieRoll; 5],
 }
 
-impl fmt::Display for Roll5 {
+impl fmt::Display for Roll {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.values.iter().map(|v| write!(f, "{}", v)).collect()
     }
 }
 
-impl Roll5 {
-    pub fn new() -> Roll5 {
+impl Roll {
+    pub fn new() -> Roll {
         let mut rng = rand::thread_rng();
-        let result: [DieFace; 5] = [rng.gen(), rng.gen(), rng.gen(), rng.gen(), rng.gen()];
-        Roll5 { values: result }
+        let result: [DieRoll; 5] = [rng.gen(), rng.gen(), rng.gen(), rng.gen(), rng.gen()];
+        Roll { values: result }
     }
 
     fn value(&self) -> usize {
@@ -81,51 +81,15 @@ impl Roll5 {
         for r in self.values.iter() {
             idx = 6 * idx
                 + match r {
-                    DieFace::One => 0,
-                    DieFace::Two => 1,
-                    DieFace::Three => 2,
-                    DieFace::Four => 3,
-                    DieFace::Five => 4,
-                    DieFace::Six => 5,
+                    DieRoll::One => 0,
+                    DieRoll::Two => 1,
+                    DieRoll::Three => 2,
+                    DieRoll::Four => 3,
+                    DieRoll::Five => 4,
+                    DieRoll::Six => 5,
                 }
         }
         idx
-    }
-}
-
-#[derive(Debug)]
-pub struct Roll {
-    roll: String,
-}
-
-impl Roll {
-    pub fn new() -> Roll {
-        Roll {
-            roll: crate::roll(),
-        }
-    }
-
-    fn value(&self) -> usize {
-        let mut idx: usize = 0;
-        for c in self.roll.chars() {
-            idx = 6 * idx
-                + match c {
-                    '1' => 0,
-                    '2' => 1,
-                    '3' => 2,
-                    '4' => 3,
-                    '5' => 4,
-                    '6' => 5,
-                    _ => panic!("Unexpected character in Roll"),
-                }
-        }
-        idx
-    }
-}
-
-impl fmt::Display for Roll {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.roll)
     }
 }
 
@@ -134,46 +98,14 @@ pub fn get_word_by_roll(roll: &Roll) -> String {
     WORDLIST[idx].to_string()
 }
 
-pub fn get_word_by_str(roll: &str) -> Result<String, Error> {
-    let mut idx: usize = 0;
-    if roll.len() != 5 {
-        return Err(Error::NoWordForRoll {
-            roll: roll.to_string(),
-        });
-    }
-    for c in roll.chars() {
-        idx = 6 * idx
-            + match c {
-                '1' => 0,
-                '2' => 1,
-                '3' => 2,
-                '4' => 3,
-                '5' => 4,
-                '6' => 5,
-                _ => {
-                    return Err(Error::NoWordForRoll {
-                        roll: roll.to_string(),
-                    })
-                }
-            }
-    }
-    Ok(WORDLIST[idx].to_string())
-}
-
 pub fn get_word() -> String {
     let mut rng = rand::thread_rng();
     let idx = rng.gen_range(0, 7776);
     WORDLIST[idx].to_string()
 }
 
-pub fn roll() -> String {
-    let mut rng = rand::thread_rng();
-    let mut result = String::with_capacity(5);
-    for _ in 0..5 {
-        let r = rng.gen_range('1' as u8, '7' as u8);
-        result.push(r as char);
-    }
-    result
+pub fn roll() -> Roll {
+    Roll::new()
 }
 
 #[cfg(test)]

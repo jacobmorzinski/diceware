@@ -39,10 +39,6 @@ fn main() -> Result<()> {
     let number: usize = opt.number;
     let method: &str = &opt.method;
 
-    print!("Test roll: ");
-    let test_roll = diceware::Roll5::new();
-    println!("{}", &test_roll);
-
     if method == "stream" {
         let word_stream = iter::repeat_with(|| diceware::get_word());
         let mut words = word_stream.take(number);
@@ -61,19 +57,6 @@ fn main() -> Result<()> {
             words.push(diceware::get_word_by_roll(&diceroll));
         }
         print!("{}", words.join(separator));
-        println!();
-    } else if method == "simple" {
-        if number > 0 {
-            let diceroll = diceware::roll();
-            let word = diceware::get_word_by_str(&diceroll)?;
-            print!("{}", word);
-            for _ in 1..number {
-                let diceroll = diceware::roll();
-                let word = diceware::get_word_by_str(&diceroll)?;
-                print!("{}", separator);
-                print!("{}", word);
-            }
-        }
         println!();
     } else {
         panic!("unimplemented method");
