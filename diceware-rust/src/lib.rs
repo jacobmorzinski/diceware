@@ -113,8 +113,21 @@ mod tests {
     use crate::WORDLIST;
 
     #[test]
-    fn is_wordlist_length_ok() {
+    fn test_wordlist_length() {
         assert!(WORDLIST.len() == 7776);
+    }
+
+    #[test]
+    fn test_get_word() {
+        let word: &str = &crate::get_word();
+        assert!(WORDLIST.contains(&word));
+    }
+
+    #[test]
+    fn test_get_word_by_roll() {
+        let roll = crate::Roll::new();
+        let word: &str = &crate::get_word_by_roll(&roll);
+        assert!(WORDLIST.contains(&word));
     }
 }
 

@@ -24,7 +24,7 @@ struct Opt {
         long,
         hidden = true,
         required = false,
-        possible_values = &["stream", "roll", "simple"],
+        possible_values = &["stream", "roll"],
         default_value = "stream",
         help = "Internal"
     )]
