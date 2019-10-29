@@ -3,9 +3,16 @@ use rand::distributions::{Distribution, Standard};
 use rand::Rng;
 use std::fmt;
 
+/// Various errors.
+/// 
+
 // #[non_exhaustive] // One day
 #[derive(From, Debug)]
 pub enum Error {
+
+    /// An earlier version of this library allowed generating
+    /// words from string representations of rolls, such as "11232".
+    /// This was an error type indicating the string was not valid.
     NoWordForRoll {
         roll: String,
     },
@@ -58,6 +65,8 @@ impl Distribution<DieRoll> for Standard {
     }
 }
 
+/// A diceware Roll is the result of five individual die rolls.
+
 #[derive(Debug)]
 pub struct Roll {
     values: [DieRoll; 5],
@@ -93,16 +102,60 @@ impl Roll {
     }
 }
 
+
+/// Get a diceware word using a [`Roll`](struct.Roll.html)
+/// 
+/// # Example
+/// ```
+/// let number: usize = 4;
+/// let separator: &str = " ";
+/// let mut words = Vec::<String>::with_capacity(number);
+/// for _ in 0..number {
+///     let diceroll = diceware::Roll::new();
+///     words.push(diceware::get_word_by_roll(&diceroll));
+/// }
+/// print!("{}", words.join(separator));
+/// println!();
+/// ```
+
 pub fn get_word_by_roll(roll: &Roll) -> String {
     let idx = roll.value();
     WORDLIST[idx].to_string()
 }
+
+/// Get a diceware word
+///
+/// # Example
+/// ```
+/// use std::iter;
+/// let number: usize = 4;
+/// let separator: &str = " ";
+/// let word_stream = iter::repeat_with(|| diceware::get_word());
+/// let mut words = word_stream.take(number);
+/// if let Some(word) = words.next() {
+///     print!("{}", word);
+///     for word in words {
+///         print!("{}", separator);
+///         print!("{}", word);
+///     }
+///     println!();
+/// }
+/// ```
 
 pub fn get_word() -> String {
     let mut rng = rand::thread_rng();
     let idx = rng.gen_range(0, 7776);
     WORDLIST[idx].to_string()
 }
+
+/// Get a diceware [`Roll`](struct.Roll.html)
+/// for later use with
+/// [`get_word_by_roll(roll: &Roll)`](fn.get_word_by_roll.html)
+/// 
+/// ## Example
+/// ```
+/// let diceroll = diceware::roll();
+/// ```
 
 pub fn roll() -> Roll {
     Roll::new()
@@ -114,7 +167,7 @@ mod tests {
 
     #[test]
     fn test_wordlist_length() {
-        assert!(WORDLIST.len() == 7776);
+        assert_eq!(WORDLIST.len(), 7776);
     }
 
     #[test]

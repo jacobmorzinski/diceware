@@ -8,6 +8,7 @@ edition = "2018"
 [[bin]]
 name = "diceware"
 path = "src/main.rs"
+doc = false
 
 [lib]
 name = "diceware"
