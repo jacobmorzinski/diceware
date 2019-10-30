@@ -4,18 +4,15 @@ use rand::Rng;
 use std::fmt;
 
 /// Various errors.
-/// 
+///
 
 // #[non_exhaustive] // One day
 #[derive(From, Debug)]
 pub enum Error {
-
     /// An earlier version of this library allowed generating
     /// words from string representations of rolls, such as "11232".
     /// This was an error type indicating the string was not valid.
-    NoWordForRoll {
-        roll: String,
-    },
+    NoWordForRoll { roll: String },
 
     // Allows you to add future errors without breaking compatibility
     // for your user's `match` arms.
@@ -24,27 +21,20 @@ pub enum Error {
     __Nonexhaustive,
 }
 
+#[repr(u8)]
 #[derive(Debug, Copy, Clone)]
 enum DieRoll {
-    One,
-    Two,
-    Three,
-    Four,
-    Five,
-    Six,
+    One = 0,
+    Two = 1,
+    Three = 2,
+    Four = 3,
+    Five = 4,
+    Six = 5,
 }
 
 impl fmt::Display for DieRoll {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let d = match self {
-            DieRoll::One => "1",
-            DieRoll::Two => "2",
-            DieRoll::Three => "3",
-            DieRoll::Four => "4",
-            DieRoll::Five => "5",
-            DieRoll::Six => "6",
-        };
-        write!(f, "{}", &d)
+        write!(f, "{}", 1 + *self as u8)
     }
 }
 
@@ -88,23 +78,14 @@ impl Roll {
     fn value(&self) -> usize {
         let mut idx: usize = 0;
         for r in self.values.iter() {
-            idx = 6 * idx
-                + match r {
-                    DieRoll::One => 0,
-                    DieRoll::Two => 1,
-                    DieRoll::Three => 2,
-                    DieRoll::Four => 3,
-                    DieRoll::Five => 4,
-                    DieRoll::Six => 5,
-                }
+            idx = 6 * idx + (*r as usize);
         }
         idx
     }
 }
 
-
 /// Get a diceware word using a [`Roll`](struct.Roll.html)
-/// 
+///
 /// # Example
 /// ```
 /// let number: usize = 4;
@@ -151,7 +132,7 @@ pub fn get_word() -> String {
 /// Get a diceware [`Roll`](struct.Roll.html)
 /// for later use with
 /// [`get_word_by_roll(roll: &Roll)`](fn.get_word_by_roll.html)
-/// 
+///
 /// ## Example
 /// ```
 /// let diceroll = diceware::roll();

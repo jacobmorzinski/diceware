@@ -54,6 +54,7 @@ fn main() -> Result<()> {
         let mut words = Vec::<String>::with_capacity(number);
         for _ in 0..number {
             let diceroll = diceware::Roll::new();
+            println!("{}", &diceroll);
             words.push(diceware::get_word_by_roll(&diceroll));
         }
         print!("{}", words.join(separator));
