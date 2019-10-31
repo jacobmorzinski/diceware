@@ -1,6 +1,6 @@
 [package]
 name = "diceware-rust"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["Jacob Morzinski <morzinski@gmail.com>"]
 description = "Print random words from the diceware list"
 edition = "2018"

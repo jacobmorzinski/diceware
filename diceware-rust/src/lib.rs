@@ -84,6 +84,12 @@ impl Roll {
     }
 }
 
+impl Default for Roll {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// Get a diceware word using a [`Roll`](struct.Roll.html)
 ///
 /// # Example
@@ -166,7 +172,7 @@ mod tests {
 }
 
 #[rustfmt::skip]
-static WORDLIST: &'static [&'static str] = &[
+static WORDLIST: &[&str] = &[
     "a",
     "a&p",
     "a's",

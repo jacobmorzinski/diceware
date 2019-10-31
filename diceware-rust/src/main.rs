@@ -40,7 +40,7 @@ fn main() -> Result<()> {
     let method: &str = &opt.method;
 
     if method == "stream" {
-        let word_stream = iter::repeat_with(|| diceware::get_word());
+        let word_stream = iter::repeat_with(diceware::get_word);
         let mut words = word_stream.take(number);
         if let Some(word) = words.next() {
             print!("{}", word);
