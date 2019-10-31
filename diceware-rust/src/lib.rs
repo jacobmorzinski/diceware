@@ -69,6 +69,7 @@ impl fmt::Display for Roll {
 }
 
 impl Roll {
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Roll {
         let mut rng = rand::thread_rng();
         let result: [DieRoll; 5] = [rng.gen(), rng.gen(), rng.gen(), rng.gen(), rng.gen()];
@@ -81,12 +82,6 @@ impl Roll {
             idx = 6 * idx + (*r as usize);
         }
         idx
-    }
-}
-
-impl Default for Roll {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
