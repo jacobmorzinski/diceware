@@ -56,6 +56,11 @@ impl Distribution<DieRoll> for Standard {
 }
 
 /// A diceware Roll is the result of five individual die rolls.
+/// # Example
+/// ```
+/// let diceroll = diceware::Roll::new();
+/// let word = diceware::get_word_by_roll(&diceroll);
+/// ```
 
 #[derive(Debug)]
 pub struct Roll {
@@ -112,7 +117,7 @@ pub fn get_word_by_roll(roll: &Roll) -> String {
 /// use std::iter;
 /// let number: usize = 4;
 /// let separator: &str = " ";
-/// let word_stream = iter::repeat_with(|| diceware::get_word());
+/// let word_stream = iter::repeat_with(diceware::get_word);
 /// let mut words = word_stream.take(number);
 /// if let Some(word) = words.next() {
 ///     print!("{}", word);
@@ -137,6 +142,7 @@ pub fn get_word() -> String {
 /// ## Example
 /// ```
 /// let diceroll = diceware::roll();
+/// let word = diceware::get_word_by_roll(&diceroll);
 /// ```
 
 pub fn roll() -> Roll {
