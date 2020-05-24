@@ -55,7 +55,7 @@ inline fun <reified T> Gson.fromJson(json: JsonReader): T {
 }
 
 fun getSecureRandom(): SecureRandom {
-    val sr: SecureRandom;
+    var sr: SecureRandom;
     try {
         try {
             sr = SecureRandom.getInstance("SHA1PRNG", "SUN")
